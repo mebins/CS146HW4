@@ -137,15 +137,19 @@ public class BacktrackingProblems {
 	 * @return true if such a subset exists
 	 */
 	public static boolean subsetProduct(List<Double> list, double lowerBound, double upperBound) {
-		if(list.size() > 0)
-		{
-			if(upperBound < lowerBound) return false;
-		}
-		else
+		if(list.size() == 0)
 		{
 			return false;
 		}
-		return false;
+		double value = list.get(0);
+		for(int i = 1; i < list.size();i++)
+		{
+			if((value*list.get(i))/lowerBound >= 1 && upperBound/(value*list.get(i)) >=1)
+			{
+				return true;
+			}
+		}
+		return subsetProduct(list.subList(1, list.size()),lowerBound,upperBound);
 	}
 
 	/**
@@ -155,48 +159,70 @@ public class BacktrackingProblems {
 	 *
 	 * For example {6, 7, 8}, 18 returns 15 {}, 10 returns 0
 	 */
-	public static int maxSubsetSum(List<Integer> list, int upperBound) {
-		return recurseMaxSubsetSum(list,upperBound, -1);
-	}
 	
-	private static int recurseMaxSubsetSum(List<Integer> list, int upperBound, int currentMax)
-	{
-		if(list.size() > 0)
-		{
-			if(list.get(0) > currentMax && list.get(0) <= upperBound)
-			{
-				return recurseMaxSubsetSum(list.subList(1, list.size()),upperBound,list.get(0));
+	public static int maxSubsetSum(List<Integer> list, int upperBound) {
+		return recurseMaxSubsetSum(list,upperBound, 0);
+	}
+	private static int recurseMaxSubsetSum(List<Integer> list, int upperBound,int counter) {
+		
+		if (list.size() > 0) {
+			if (list.get(0)+counter <= upperBound) {
+				int result = recurseMaxSubsetSum(list.subList(1, list.size()), upperBound,counter + list.get(0));
+				if (result != 0) {
+					if(result > counter)
+					{
+						return result;
+					}
+					return counter;
+				} else {
+					return  recurseMaxSubsetSum(list.subList(1, list.size()), upperBound, counter);
+				}
+			} else {
+				return  recurseMaxSubsetSum(list.subList(1, list.size()), upperBound, counter);
 			}
-			else
-			{
-				return recurseMaxSubsetSum(list.subList(1, list.size()),upperBound,currentMax);
-			}
-		}
-		else
-		{
-			return currentMax;
-		}
+		} else {
+			return counter;
+		}	
 	}
 
 	public static void main(String[] args) {
 		// odd subset sum
 		List<Integer> list1 = new ArrayList<>(Arrays.asList(5, 13, 9, 8, 2));
 		List<Integer> list2 = new ArrayList<>(Arrays.asList(1,2,1,4,1,5,1,1,1,1,2,1,4,1,3));
+		List<Double>  list3 = new ArrayList<>(Arrays.asList(1.0,4.0,5.0,2.0,7.0,1.0,7.0,2.0,8.0));
+		List<Double>  list4 = new ArrayList<>(Arrays.asList(1.0,2.0,3.0,5.0,12.0,60.0,24.0,623.0,8.0,22.0));
+		List<Integer> list5 = new ArrayList<>(Arrays.asList(6, 7, 8));
+		List<Double>  empty = new ArrayList<>();
+		
+		/*
 		System.out.println(list1 + ", 8: oddSubsetSum " + oddSubsetSum(list1, 8));
 		System.out.println(list1 + ", 13: oddSubsetSum " + oddSubsetSum(list1, 13));
 		System.out.println(list1 + ", 14: oddSubsetSum " + oddSubsetSum(list1, 14));
 		System.out.println(list1 + ", 15: oddSubsetSum " + oddSubsetSum(list1, 15));
+		
 		System.out.println(list2 + ", 8: SubsetOf8Sum:" + subsetOf8Sum(list2,8));
 		System.out.println(list2 + ", 10: SubsetOf8Sum:" + subsetOf8Sum(list2,10));
 		System.out.println(list2 + ", 1: SubsetOf8Sum:" + subsetOf8Sum(list2,1));
 		System.out.println(list2 + ", 16: SubsetOf8Sum:" + subsetOf8Sum(list2,16));
+		
 		System.out.println(list2 + ", 8: nonEmptySubsetSum:" + nonEmptySubsetSum(list2,8));
 		System.out.println(list2 + ", 10: nonEmptySubsetSum:" + nonEmptySubsetSum(list2,10));
 		System.out.println(list2 + ", 1: nonEmptySubsetSum:" + nonEmptySubsetSum(list2,1));
 		System.out.println(list2 + ", 16: nonEmptySubsetSum:" + nonEmptySubsetSum(list2,16));
-		System.out.println(list1 + ", List 1: maxSubsetSum:" + maxSubsetSum(list1,10));
-		System.out.println(list2 + ", List 2: maxSubsetSum:" + maxSubsetSum(list2,10));
-		// write more test code here
+		
+		System.out.println(list3 + ", List 3: subsetProduct Upperbound : 10, Lowerbound : 5:" + subsetProduct(list3,5,10));
+		System.out.println(list4 + ", List 4: subsetProduct Upperbound : 21, Lowerbound : 20:" + subsetProduct(list4,20,21));
+		System.out.println(list4 + ", List 4: subsetProduct Upperbound : 22, Lowerbound : 20:" + subsetProduct(list4,20,22));
+		System.out.println(empty + ", Empty : subsetProduct Upperbound : 22, Lowerbound : 20:" + subsetProduct(empty,20,22));
+		*/
+		System.out.println(list1 + ", List 1: maxSubsetSum Upperbound : 10 : " + maxSubsetSum(list1,10));
+		System.out.println(list1 + ", List 1: maxSubsetSum Upperbound : 30 : "  + maxSubsetSum(list1,30));
+		System.out.println(list2 + ", List 2: maxSubsetSum Upperbound : 0 : " + maxSubsetSum(list2,0));
+		System.out.println(list2 + ", List 2: maxSubsetSum Upperbound : 10 : " + maxSubsetSum(list2,10));
+		System.out.println(list2 + ", List 2: maxSubsetSum Upperbound : 30 : " + maxSubsetSum(list2,30));
+		System.out.println(list5 + ", List 5: maxSubsetSum Upperbound : 10 : " + maxSubsetSum(list5,10));
+		System.out.println(list5 + ", List 5: maxSubsetSum Upperbound : 18 : " + maxSubsetSum(list5,18));
+	
 	}
 
 }
